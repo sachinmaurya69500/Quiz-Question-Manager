@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quiz Question Manager | Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="{{ url_for('static', filename='quiz_logic.js') }}"></script>
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-100">
+  <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,_rgba(34,197,94,0.18),_transparent_32%),radial-gradient(circle_at_bottom_right,_rgba(14,165,233,0.18),_transparent_34%)]"></div>
+  <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <header class="mb-8 flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur md:flex-row md:items-center md:justify-between">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-cyan-300">Dashboard</p>
+        <h1 class="mt-2 text-3xl font-black text-white">Quiz Question Manager</h1>
+        <p id="session-info" class="mt-1 text-sm text-slate-300">Loading session...</p>
+      </div>
+      <button id="logout-btn" class="rounded-2xl border border-white/10 bg-slate-900/80 px-5 py-3 text-sm font-semibold text-white transition hover:border-red-400/40 hover:bg-red-500/10">Logout</button>
+    </header>
+
+    <section class="grid gap-6 lg:grid-cols-[420px_minmax(0,1fr)]">
+      <div class="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+        <div class="mb-6 flex items-center justify-between">
+          <div>
+            <h2 id="form-title" class="text-2xl font-bold text-white">Add Question</h2>
+            <p class="mt-1 text-sm text-slate-300">Create or edit a question from this form.</p>
+          </div>
+          <button id="cancel-edit-btn" class="hidden rounded-xl border border-white/10 px-3 py-2 text-sm text-slate-200 transition hover:bg-white/5">Cancel</button>
+        </div>
+
+        <form id="question-form" class="space-y-4">
+          <input type="hidden" id="question-id">
+          <div>
+            <label class="mb-2 block text-sm font-medium text-slate-200" for="question_text">Question</label>
+            <textarea id="question_text" rows="4" required class="w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-cyan-400"></textarea>
+          </div>
+          <div>
+            <label class="mb-2 block text-sm font-medium text-slate-200">Options</label>
+            <div id="options-container" class="space-y-3">
+              <input class="option-input w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-cyan-400" placeholder="Option 1" required>
+              <input class="option-input w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-cyan-400" placeholder="Option 2" required>
+              <input class="option-input w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-cyan-400" placeholder="Option 3" required>
+              <input class="option-input w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-cyan-400" placeholder="Option 4" required>
+            </div>
+          </div>
+          <div>
+            <label class="mb-2 block text-sm font-medium text-slate-200" for="correct_answer">Correct Answer</label>
+            <input id="correct_answer" required class="w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-cyan-400" placeholder="Must exactly match one option">
+          </div>
+          <div>
+            <label class="mb-2 block text-sm font-medium text-slate-200" for="category">Category</label>
+            <input id="category" required class="w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-cyan-400" placeholder="e.g. Python, History, Science">
+          </div>
+          <button id="submit-btn" type="submit" class="w-full rounded-2xl bg-cyan-400 px-4 py-3 font-semibold text-slate-950 transition hover:bg-cyan-300">Add Question</button>
+        </form>
+
+        <p id="form-message" class="mt-4 min-h-6 text-sm text-slate-300"></p>
+      </div>
+
+      <div class="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+        <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 class="text-2xl font-bold text-white">Questions</h2>
+            <p class="mt-1 text-sm text-slate-300">Edit or delete rows without reloading the page.</p>
+          </div>
+          <button id="refresh-btn" class="rounded-2xl border border-white/10 px-4 py-2 text-sm text-white transition hover:bg-white/5">Refresh</button>
+        </div>
+
+        <div class="overflow-hidden rounded-2xl border border-white/10">
+          <table class="min-w-full divide-y divide-white/10 text-left text-sm">
+            <thead class="bg-slate-900/80 text-slate-300">
+              <tr>
+                <th class="px-4 py-3">Question</th>
+                <th class="px-4 py-3">Category</th>
+                <th class="px-4 py-3">Correct Answer</th>
+                <th class="px-4 py-3">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="questions-table" class="divide-y divide-white/10 bg-slate-950/40">
+              <tr>
+                <td class="px-4 py-4 text-slate-300" colspan="4">Loading questions...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

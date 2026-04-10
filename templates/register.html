@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quiz Question Manager | Register</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="{{ url_for('static', filename='quiz_logic.js') }}"></script>
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-100">
+  <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(168,85,247,0.2),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(59,130,246,0.15),_transparent_30%)]"></div>
+  <main class="mx-auto flex min-h-screen w-full max-w-4xl items-center justify-center px-6 py-12">
+    <section class="w-full rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur md:p-12">
+      <p class="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">Admin Setup</p>
+      <h1 class="mt-4 text-4xl font-black text-white">Register the first admin</h1>
+      <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-300">Create the admin account before login is allowed. Once registered, the app uses password hashing and OTP verification for sign-in.</p>
+
+      <form id="register-form" class="mt-8 grid gap-4">
+        <div>
+          <label class="mb-2 block text-sm font-medium text-slate-200" for="register-email">Email</label>
+          <input id="register-email" type="email" required class="w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-cyan-400">
+        </div>
+        <div>
+          <label class="mb-2 block text-sm font-medium text-slate-200" for="register-password">Password</label>
+          <input id="register-password" type="password" required class="w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-cyan-400">
+        </div>
+        <button type="submit" class="rounded-2xl bg-cyan-400 px-4 py-3 font-semibold text-slate-950 transition hover:bg-cyan-300">Register Admin</button>
+      </form>
+
+      <p id="register-message" class="mt-6 min-h-6 text-sm text-slate-300"></p>
+      <p class="mt-4 text-sm text-slate-400">Already registered? <a class="text-cyan-300 underline-offset-4 hover:underline" href="/">Go to login</a></p>
+    </section>
+  </main>
+</body>
+</html>
