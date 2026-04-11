@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Quiz Question Manager{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Manrope', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              100: '#d8f7f0',
+              200: '#9eeedb',
+              300: '#5fe2c2',
+              400: '#2fd1ab',
+              500: '#12b891',
+            },
+          },
+          boxShadow: {
+            panel: '0 24px 80px rgba(0, 0, 0, 0.35)',
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script defer src="{{ url_for('static', filename='quiz_logic.js') }}"></script>
+  {% block head_extra %}{% endblock %}
+</head>
+<body class="min-h-screen bg-slate-950 font-sans text-slate-100 antialiased">
+  {% block bg_glow %}
+  <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(18,184,145,0.22),_transparent_36%),radial-gradient(circle_at_bottom_right,_rgba(14,165,233,0.18),_transparent_35%)]"></div>
+  {% endblock %}
+  {% block content %}{% endblock %}
+</body>
+</html>

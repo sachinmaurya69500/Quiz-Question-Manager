@@ -19,6 +19,7 @@ const loginForm = document.getElementById('login-form');
 const otpForm = document.getElementById('otp-form');
 const authMessage = document.getElementById('auth-message');
 const registerForm = document.getElementById('register-form');
+const registerOtpForm = document.getElementById('register-otp-form');
 const registerMessage = document.getElementById('register-message');
 const loginEmailInput = document.getElementById('email');
 const questionForm = document.getElementById('question-form');
@@ -37,6 +38,7 @@ const isRegisterPage = Boolean(registerForm);
 const isDashboardPage = Boolean(questionForm);
 
 let pendingEmail = '';
+let pendingRegisterEmail = '';
 
 const setMessage = (element, message, isError = false) => {
   if (!element) return;
@@ -174,7 +176,7 @@ if (isLoginPage) {
 if (isRegisterPage) {
   registerForm.addEventListener('submit', async (event) => {
     event.preventDefault();
-    setMessage(registerMessage, 'Registering admin...');
+    setMessage(registerMessage, 'Sending registration OTP...');
 
     try {
       const payload = {
@@ -182,6 +184,24 @@ if (isRegisterPage) {
         password: document.getElementById('register-password').value,
       };
       const data = await apiRequest('/api/auth/register', { method: 'POST', body: JSON.stringify(payload) });
+      pendingRegisterEmail = payload.email;
+      registerOtpForm.classList.remove('hidden');
+      setMessage(registerMessage, data.message);
+    } catch (error) {
+      setMessage(registerMessage, error.message, true);
+    }
+  });
+
+  registerOtpForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    setMessage(registerMessage, 'Verifying registration OTP...');
+
+    try {
+      const payload = {
+        email: pendingRegisterEmail || document.getElementById('register-email').value.trim(),
+        otp: document.getElementById('register-otp').value.trim(),
+      };
+      const data = await apiRequest('/api/auth/register/verify-otp', { method: 'POST', body: JSON.stringify(payload) });
       setMessage(registerMessage, data.message);
       window.location.href = '/';
     } catch (error) {

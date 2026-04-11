@@ -1,18 +1,16 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Quiz Question Manager | Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script defer src="{{ url_for('static', filename='quiz_logic.js') }}"></script>
-</head>
-<body class="min-h-screen bg-slate-950 text-slate-100">
-  <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,_rgba(34,197,94,0.18),_transparent_32%),radial-gradient(circle_at_bottom_right,_rgba(14,165,233,0.18),_transparent_34%)]"></div>
+{% extends "base.html" %}
+
+{% block title %}Quiz Question Manager | Dashboard{% endblock %}
+
+{% block bg_glow %}
+  <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,_rgba(18,184,145,0.18),_transparent_32%),radial-gradient(circle_at_bottom_right,_rgba(14,165,233,0.18),_transparent_34%)]"></div>
+{% endblock %}
+
+{% block content %}
   <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
     <header class="mb-8 flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur md:flex-row md:items-center md:justify-between">
       <div>
-        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-cyan-300">Dashboard</p>
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-brand-300">Dashboard</p>
         <h1 class="mt-2 text-3xl font-black text-white">Quiz Question Manager</h1>
         <p id="session-info" class="mt-1 text-sm text-slate-300">Loading session...</p>
       </div>
@@ -33,26 +31,26 @@
           <input type="hidden" id="question-id">
           <div>
             <label class="mb-2 block text-sm font-medium text-slate-200" for="question_text">Question</label>
-            <textarea id="question_text" rows="4" required class="w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-cyan-400"></textarea>
+            <textarea id="question_text" rows="4" required class="w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-brand-300"></textarea>
           </div>
           <div>
             <label class="mb-2 block text-sm font-medium text-slate-200">Options</label>
             <div id="options-container" class="space-y-3">
-              <input class="option-input w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-cyan-400" placeholder="Option 1" required>
-              <input class="option-input w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-cyan-400" placeholder="Option 2" required>
-              <input class="option-input w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-cyan-400" placeholder="Option 3" required>
-              <input class="option-input w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-cyan-400" placeholder="Option 4" required>
+              <input class="option-input w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-brand-300" placeholder="Option 1" aria-label="Option 1" required>
+              <input class="option-input w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-brand-300" placeholder="Option 2" aria-label="Option 2" required>
+              <input class="option-input w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-brand-300" placeholder="Option 3" aria-label="Option 3" required>
+              <input class="option-input w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-brand-300" placeholder="Option 4" aria-label="Option 4" required>
             </div>
           </div>
           <div>
             <label class="mb-2 block text-sm font-medium text-slate-200" for="correct_answer">Correct Answer</label>
-            <input id="correct_answer" required class="w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-cyan-400" placeholder="Must exactly match one option">
+            <input id="correct_answer" required class="w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-brand-300" placeholder="Must exactly match one option">
           </div>
           <div>
             <label class="mb-2 block text-sm font-medium text-slate-200" for="category">Category</label>
-            <input id="category" required class="w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-cyan-400" placeholder="e.g. Python, History, Science">
+            <input id="category" required class="w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none focus:border-brand-300" placeholder="e.g. Python, History, Science">
           </div>
-          <button id="submit-btn" type="submit" class="w-full rounded-2xl bg-cyan-400 px-4 py-3 font-semibold text-slate-950 transition hover:bg-cyan-300">Add Question</button>
+          <button id="submit-btn" type="submit" class="w-full rounded-2xl bg-brand-400 px-4 py-3 font-semibold text-slate-950 transition hover:bg-brand-300">Add Question</button>
         </form>
 
         <p id="form-message" class="mt-4 min-h-6 text-sm text-slate-300"></p>
@@ -87,5 +85,4 @@
       </div>
     </section>
   </main>
-</body>
-</html>
+{% endblock %}

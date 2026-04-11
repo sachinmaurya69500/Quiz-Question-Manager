@@ -105,6 +105,8 @@ def _validate_question_payload(payload):
 def index():
     if _current_admin_email():
         return redirect(url_for("dashboard"))
+    if not _admin_exists():
+        return redirect(url_for("register_page"))
     return render_template("login.html")
 
 
@@ -120,6 +122,8 @@ def dashboard():
 def register_page():
     if _current_admin_email():
         return redirect(url_for("dashboard"))
+    if _admin_exists():
+        return redirect(url_for("index"))
     return render_template("register.html")
 
 
@@ -132,6 +136,9 @@ def login():
     if not email or not password:
         return _json_error("Email and password are required.")
 
+    if not _admin_exists():
+        return _json_error("No admin is registered yet. Please register first.", 403)
+
     admin = admins_collection.find_one({"email": email})
     if not admin:
         return _json_error("Invalid credentials.", 401)
@@ -143,10 +150,11 @@ def login():
     otp = generate_otp()
     expires_at = datetime.now(timezone.utc) + timedelta(minutes=10)
 
-    otp_collection.delete_many({"email": email})
+    otp_collection.delete_many({"email": email, "purpose": "login"})
     otp_collection.insert_one(
         {
             "email": email,
+            "purpose": "login",
             "otp_hash": hash_otp(otp),
             "expires_at": expires_at,
             "created_at": datetime.now(timezone.utc),
@@ -156,7 +164,7 @@ def login():
     try:
         send_otp_email(email, otp)
     except Exception as exc:
-        otp_collection.delete_many({"email": email})
+        otp_collection.delete_many({"email": email, "purpose": "login"})
         return _json_error(f"Unable to send OTP email: {exc}", 502)
 
     session.clear()
@@ -174,14 +182,14 @@ def verify_login_otp():
     if not email or not otp:
         return _json_error("Email and OTP are required.")
 
-    challenge = otp_collection.find_one({"email": email})
+    challenge = otp_collection.find_one({"email": email, "purpose": "login"})
     if not challenge:
         return _json_error("OTP is invalid or expired.", 401)
 
     if not verify_otp(otp, challenge["otp_hash"]):
         return _json_error("OTP is invalid or expired.", 401)
 
-    otp_collection.delete_many({"email": email})
+    otp_collection.delete_many({"email": email, "purpose": "login"})
     session.clear()
     session["admin_email"] = email
     session["authenticated_at"] = datetime.now(timezone.utc).isoformat()
@@ -218,14 +226,62 @@ def register_admin():
     if _admin_exists():
         return _json_error("Registration is closed because an admin account already exists.", 403)
 
+    otp = generate_otp()
+    expires_at = datetime.now(timezone.utc) + timedelta(minutes=10)
+
+    otp_collection.delete_many({"email": email, "purpose": "register"})
+    otp_collection.insert_one(
+        {
+            "email": email,
+            "purpose": "register",
+            "otp_hash": hash_otp(otp),
+            "password_hash": hash_password(password),
+            "expires_at": expires_at,
+            "created_at": datetime.now(timezone.utc),
+        }
+    )
+
+    try:
+        send_otp_email(email, otp)
+    except Exception as exc:
+        otp_collection.delete_many({"email": email, "purpose": "register"})
+        return _json_error(f"Unable to send OTP email: {exc}", 502)
+
+    session["pending_register_email"] = email
+
+    return jsonify({"success": True, "message": "Registration OTP sent to your email."}), 200
+
+
+@app.route("/api/auth/register/verify-otp", methods=["POST"])
+def verify_register_otp():
+    payload = request.get_json(silent=True) or {}
+    email = (payload.get("email") or session.get("pending_register_email") or "").strip().lower()
+    otp = (payload.get("otp") or "").strip()
+
+    if not email or not otp:
+        return _json_error("Email and OTP are required.")
+
+    if _admin_exists():
+        return _json_error("Registration is closed because an admin account already exists.", 403)
+
+    challenge = otp_collection.find_one({"email": email, "purpose": "register"})
+    if not challenge:
+        return _json_error("OTP is invalid or expired.", 401)
+
+    if not verify_otp(otp, challenge["otp_hash"]):
+        return _json_error("OTP is invalid or expired.", 401)
+
     admins_collection.insert_one(
         {
             "email": email,
-            "password_hash": hash_password(password),
+            "password_hash": challenge["password_hash"],
             "created_at": datetime.now(timezone.utc),
             "updated_at": datetime.now(timezone.utc),
         }
     )
+
+    otp_collection.delete_many({"email": email, "purpose": "register"})
+    session.pop("pending_register_email", None)
 
     return jsonify({"success": True, "message": "Admin registered successfully. You can now log in."}), 201
 
